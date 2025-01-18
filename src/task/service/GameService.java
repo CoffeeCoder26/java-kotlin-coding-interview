@@ -1,63 +1,64 @@
 package src.task.service;
 
+import src.task.enums.ChoiceEnum;
+import src.task.enums.ResultEnum;
+import src.task.model.GameCounter;
+
 import java.util.Random;
 
 public class GameService {
 
     public void implementRockPaperScissorsGame() {
-        int playerAWinsCounter = 0;
-        int playerBWinsCounter = 0;
-        int numberOfDraws = 0;
+        GameCounter gameCounter = new GameCounter();
         int numberOfRounds = 100;
 
         for (int round = 1; round <= numberOfRounds; round++) {
-            String playerAChoice = "ROCK";
-            String playerBChoice = generateRandomChoice();
-            String roundResult = determineRoundWinner(playerAChoice, playerBChoice);
-
-            if (roundResult.equals("WIN")) {
-                playerAWinsCounter++;
-            } else if (roundResult.equals("LOSE")) {
-                playerBWinsCounter++;
-            } else {
-                numberOfDraws++;
-            }
+            ChoiceEnum playerAChoiceEnum = ChoiceEnum.ROCK;
+            ChoiceEnum playerBChoiceEnum = generateRandomChoice();
+            ResultEnum roundResult = determineRoundWinner(playerAChoiceEnum, playerBChoiceEnum);
+            updateGameCounters(roundResult, gameCounter);
         }
-
-        System.out.println("Player A wins " + playerAWinsCounter + " of 100 games");
-        System.out.println("Player B wins " + playerBWinsCounter + " of 100 games");
-        System.out.println("Draws: " + numberOfDraws + " of 100 games");
-
+        printGameOutput(gameCounter, numberOfRounds);
     }
 
-
-    private String generateRandomChoice() {
+    private ChoiceEnum generateRandomChoice() {
         Random random = new Random();
-        int choice = random.nextInt(3);
-        switch (choice) {
-            case 0:
-                return "ROCK";
-            case 1:
-                return "PAPER";
-            case 2:
-                return "SCISSORS";
+        int choice = random.nextInt(ChoiceEnum.values().length);
+        return ChoiceEnum.values()[choice];
+    }
+
+    private ResultEnum determineRoundWinner(ChoiceEnum playerAChoiceEnum, ChoiceEnum playerBChoiceEnum) {
+        if (playerAChoiceEnum == playerBChoiceEnum)
+            return ResultEnum.DRAW;
+        switch (playerAChoiceEnum) {
+            case ROCK:
+                return playerBChoiceEnum == ChoiceEnum.SCISSORS ? ResultEnum.WIN : ResultEnum.LOSE;
+            case PAPER:
+                return playerBChoiceEnum == ChoiceEnum.ROCK ? ResultEnum.WIN : ResultEnum.LOSE;
+            case SCISSORS:
+                return playerBChoiceEnum == ChoiceEnum.PAPER ? ResultEnum.WIN : ResultEnum.LOSE;
             default:
-                throw new IllegalArgumentException("Invalid choice");
+                return ResultEnum.DRAW;
         }
     }
 
-    private String determineRoundWinner(String playerAChoice, String playerBChoice) {
-        if (playerAChoice.equals(playerBChoice))
-            return "DRAW";
-        switch (playerAChoice) {
-            case "ROCK":
-                return playerBChoice.equals("SCISSORS") ? "WIN" : "LOSE";
-            case "PAPER":
-                return playerBChoice.equals("ROCK") ? "WIN" : "LOSE";
-            case "SCISSORS":
-                return playerBChoice.equals("PAPER") ? "WIN" : "LOSE";
-            default:
-                throw new IllegalArgumentException("Invalid choice");
+    private void updateGameCounters(ResultEnum roundResult, GameCounter gameCounter) {
+        switch (roundResult) {
+            case WIN:
+                gameCounter.incrementPlayerAWinsCounter();
+                break;
+            case LOSE:
+                gameCounter.incrementPlayerBWinsCounter();
+                break;
+            case DRAW:
+                gameCounter.incrementNumberOfDraws();
+                break;
         }
+    }
+
+    private static void printGameOutput(GameCounter gameCounter ,int numberOfRounds) {
+        System.out.println("Player A wins: " + gameCounter.getPlayerAWinsCounter() + " out of " + numberOfRounds + " rounds");
+        System.out.println("Player B wins: " + gameCounter.getPlayerBWinsCounter() + " out of " + numberOfRounds + " rounds");
+        System.out.println("Number of draws: " + gameCounter.getNumberOfDraws() + " out of " + numberOfRounds + " rounds");
     }
 }
