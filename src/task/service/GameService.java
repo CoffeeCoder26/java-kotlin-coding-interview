@@ -57,8 +57,8 @@ public class GameService {
     }
 
     private static void printGameOutput(GameCounter gameCounter ,int numberOfRounds) {
-        System.out.println("Player A wins: " + gameCounter.getPlayerAWinsCounter() + " out of " + numberOfRounds + " rounds");
-        System.out.println("Player B wins: " + gameCounter.getPlayerBWinsCounter() + " out of " + numberOfRounds + " rounds");
-        System.out.println("Number of draws: " + gameCounter.getNumberOfDraws() + " out of " + numberOfRounds + " rounds");
+        System.out.println("Player A wins " + gameCounter.getPlayerAWinsCounter() + " of " + numberOfRounds + " games");
+        System.out.println("Player B wins " + gameCounter.getPlayerBWinsCounter() + " of " + numberOfRounds + " games");
+        System.out.println("Draws: " + gameCounter.getNumberOfDraws() + " of " + numberOfRounds + " games");
     }
 }
